@@ -1,0 +1,2 @@
+# ManipuladorIPTVGrafico
+Manipulador IPTV Grafico
