@@ -1,4 +1,8 @@
 package br.com.iptv.main;
+import br.com.iptv.geraexcel.GeraExcel;
+import br.com.iptv.manipulador.*;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 import java.awt.EventQueue;
 
@@ -43,10 +47,12 @@ public class ManipuladorIPTVGrafico {
 
 	private JFrame frame;
 	private JTextField txtArquivoOrigem;
-	private JTextField txtDiretorioDestino;
+	private JTextField txtArquivoDestino;
 	//private JProgressBar prbProgresso;
 	private final Action action = new SwingAction();
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextField txtArquivoDrive;
+	private JTextField txtLink;
 
 	/**
 	 * Launch the application.
@@ -76,7 +82,7 @@ public class ManipuladorIPTVGrafico {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 297);
+		frame.setBounds(100, 100, 450, 315);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -94,44 +100,46 @@ public class ManipuladorIPTVGrafico {
 		
 		JPanel panel01 = new JPanel();
 		panel01.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel01.setBounds(7, 7, 417, 62);
+		panel01.setBounds(7, 7, 417, 118);
 		frame.getContentPane().add(panel01);
 		
-		txtDiretorioDestino = new JTextField();
-		txtDiretorioDestino.setText("C:\\Temp\\TesteIPTV\\");
-		txtDiretorioDestino.setColumns(10);
+		txtArquivoDestino = new JTextField();
+		txtArquivoDestino.setText("getsaida.xlsx");
+		txtArquivoDestino.setColumns(10);
 		
-		JLabel lblDiretorioDestino = new JLabel("Diret\u00F3rio de Destino:");
+		JLabel lblArquivoDestino = new JLabel("Arquivo de Destino:");
 		
 		JLabel lblArquivoOrigem = new JLabel("Arquivo de Origem:");
 		
 		txtArquivoOrigem = new JTextField();
-		txtArquivoOrigem.setText("C:\\Temp\\TesteIPTV\\m3u-FelipeDani-plus.m3u");
+		txtArquivoOrigem.setText("get.php");
 		txtArquivoOrigem.setToolTipText("Teste");
 		txtArquivoOrigem.setColumns(10);
-		panel01.setLayout(new MigLayout("", "[99px][298.00px]", "[20px][20px]"));
-		panel01.add(txtDiretorioDestino, "cell 1 1,growx,aligny top");
-		panel01.add(lblDiretorioDestino, "cell 0 1,alignx left,aligny center");
+		panel01.setLayout(new MigLayout("", "[99px][298.00px,grow]", "[20px][20px][][]"));
+		panel01.add(txtArquivoDestino, "cell 1 1,growx,aligny top");
+		panel01.add(lblArquivoDestino, "cell 0 1,alignx left,aligny center");
 		panel01.add(lblArquivoOrigem, "cell 0 0,alignx left,growy");
 		panel01.add(txtArquivoOrigem, "cell 1 0,growx,aligny top");
 		
-		JPanel panel02 = new JPanel();
-		panel02.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel02.setBounds(7, 77, 196, 71);
-		frame.getContentPane().add(panel02);
-		panel02.setLayout(new MigLayout("", "[188px]", "[23px][23px]"));
+		JLabel lblArquivoDestinoDrive = new JLabel("Arquivo Drive:");
+		panel01.add(lblArquivoDestinoDrive, "cell 0 2,alignx left");
 		
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("M3U");
-		buttonGroup.add(rdbtnNewRadioButton);
-		panel02.add(rdbtnNewRadioButton, "cell 0 0,growx,aligny top");
+		txtArquivoDrive = new JTextField();
+		txtArquivoDrive.setText("getsaidadrive.xlsx");
+		panel01.add(txtArquivoDrive, "cell 1 2,growx");
+		txtArquivoDrive.setColumns(10);
 		
-		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("CSV");
-		buttonGroup.add(rdbtnNewRadioButton_1);
-		panel02.add(rdbtnNewRadioButton_1, "cell 0 1,growx,aligny top");
+		JLabel lblLink = new JLabel("Link:");
+		panel01.add(lblLink, "cell 0 3,alignx left");
+		
+		txtLink = new JTextField();
+		txtLink.setText("http://natv.fm/get.php?username=3196255762&password=95679578831&type=m3u_plus&output=ts");
+		panel01.add(txtLink, "cell 1 3,growx");
+		txtLink.setColumns(10);
 		
 		JPanel panel03 = new JPanel();
 		panel03.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel03.setBounds(213, 77, 211, 71);
+		panel03.setBounds(7, 129, 417, 38);
 		frame.getContentPane().add(panel03);
 		panel03.setLayout(null);
 		
@@ -139,7 +147,7 @@ public class ManipuladorIPTVGrafico {
 		
 		JPanel panel04 = new JPanel();
 		panel04.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel04.setBounds(7, 159, 417, 73);
+		panel04.setBounds(7, 170, 417, 73);
 		frame.getContentPane().add(panel04);
 		panel04.setLayout(null);
 		
@@ -155,11 +163,28 @@ public class ManipuladorIPTVGrafico {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ManipuladorIPTVGrafico man = new ManipuladorIPTVGrafico();
+				ManipuladorArquivo man = new ManipuladorArquivo();
+				GeraExcel geraexcel = new GeraExcel();
+				
+				try {
+					man.manipulador(txtArquivoOrigem.getText(), txtArquivoDestino.getText(), txtArquivoDrive.getText(), txtLink.getText());
+					try {
+						geraexcel.writeExcel(man.linhas, txtArquivoDestino.getText());
+					} catch (RowsExceededException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (WriteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 		});
-		btnNewButton.setBounds(63, 23, 79, 23);
+		btnNewButton.setBounds(169, 8, 79, 23);
 		panel03.add(btnNewButton);
 		btnNewButton.setAction(action);
 	}

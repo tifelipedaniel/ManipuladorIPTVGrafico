@@ -1,4 +1,4 @@
-package br.com.iptv.main;
+package br.com.iptv.mainold;
 import java.io.IOException;
 import java.util.Scanner;
 

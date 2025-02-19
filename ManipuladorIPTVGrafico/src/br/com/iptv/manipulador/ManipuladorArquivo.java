@@ -1,30 +1,44 @@
 package br.com.iptv.manipulador;
+
+import br.com.iptv.download.*;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
 public class ManipuladorArquivo {
 	
-	public static void manipulador (String arq_ori, String arq_des) throws IOException {
+	public List<List<String>> linhas;
+	public String tipo, grupo, canal, link = "";
+
+	public ManipuladorArquivo() {
+		this.linhas = new ArrayList<List<String>>();
+
+	}
+	
+	public void manipulador (String arq_ori, String arq_des, String arq_drive, String link) throws IOException {
+		
+//		Download download = new Download();
+//		download.downloadFile(link, arq_ori);
 		
 		BufferedReader buffRead = new BufferedReader(new FileReader(arq_ori));
-		BufferedWriter buffWrite = new BufferedWriter(new FileWriter(arq_des));
-		buffWrite.append("TIPO | GRUPO | CANAL" + "\n");
-		
 		String linha = "";
+		String[] campos = new String[4];
+		
 		while (true) {
 			if (linha == null)
 					break;
 			
 			linha = buffRead.readLine();
 			if ( (linha != null) && (linha.length() > 45) && (linha.charAt(0) == '#') ) {
-				
-				String[] campos = new String[3];
-				
+								
 				int car_ini = linha.indexOf("group-title=\"");
 				int car_tot = linha.length();
 				
@@ -51,19 +65,16 @@ public class ManipuladorArquivo {
 					
 				}
 				
-				String linhafinal = campos[0] + " | " + campos[1] + " | " + campos[2];
-				System.out.println(linhafinal);
+			} else {
 				
-				//escreve no arquivo
-				buffWrite.append(linhafinal + "\n");
+				campos[3] = linha;
+				this.linhas.add(Arrays.asList(campos));
+				
 			}
 
-			
 		}
-		
-		buffWrite.close();
-		buffRead.close();
-		
+		//buffWrite.close();
+		buffRead.close();	
 	}
 
 }
