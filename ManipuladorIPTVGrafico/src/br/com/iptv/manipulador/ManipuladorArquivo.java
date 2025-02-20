@@ -1,80 +1,127 @@
 package br.com.iptv.manipulador;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import br.com.iptv.download.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 
 public class ManipuladorArquivo {
-	
-	public List<List<String>> linhas;
-	public String tipo, grupo, canal, link = "";
 
-	public ManipuladorArquivo() {
-		this.linhas = new ArrayList<List<String>>();
+    public void Principal(String m3uFilePath, String excelFilePath) {
+//        String m3uFilePath = "get.php";
+//        String excelFilePath = "getsaida.xlsx";
 
-	}
-	
-	public void manipulador (String arq_ori, String arq_des, String arq_drive, String link) throws IOException {
-		
-//		Download download = new Download();
-//		download.downloadFile(link, arq_ori);
-		
-		BufferedReader buffRead = new BufferedReader(new FileReader(arq_ori));
-		String linha = "";
-		String[] campos = new String[4];
-		
-		while (true) {
-			if (linha == null)
-					break;
-			
-			linha = buffRead.readLine();
-			if ( (linha != null) && (linha.length() > 45) && (linha.charAt(0) == '#') ) {
-								
-				int car_ini = linha.indexOf("group-title=\"");
+        try {
+            List<Canal> canais = lerArquivoM3U(m3uFilePath);
+            criarArquivoExcel(canais, excelFilePath);
+             JOptionPane.showMessageDialog(null, "Arquivo Excel criado com sucesso!");
+        } catch (IOException e) {
+        	JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    private static List<Canal> lerArquivoM3U(String filePath) throws IOException {
+        List<Canal> canais = new ArrayList<>();
+        List<String> linhas = Files.readAllLines(Paths.get(filePath));
+
+        for (int i = 0; i < linhas.size(); i++) {
+            String linha = linhas.get(i);
+            if (linha.startsWith("#EXTINF:")) {
+                String[] partes = linha.split(",");
+                String info = partes[0].substring(8); // Remove "#EXTINF:"
+               
+                int car_ini = linha.indexOf("group-title=\"");
 				int car_tot = linha.length();
-				
-				String original = "";
-				original = linha.substring(car_ini+13,car_tot);
-				
-				if(original.indexOf("|") == -1) {
-					
-					String[] originalComSplit = new String[2];
-					originalComSplit = original.split("\",");
-					campos[2] = originalComSplit[1];
-					campos[0] = campos[1] = originalComSplit[0];
-					
-				} else {
-										
-					String[] originalComSplit = new String[2];
-					originalComSplit = original.split("\",");
-					campos[2] = originalComSplit[1];
-					
-					String[] tempComSplit = new String[2];
-					tempComSplit = originalComSplit[0].split(Pattern.quote(" | "));
-					campos[0] = tempComSplit[0];
-					campos[1] = tempComSplit[1];
-					
-				}
-				
-			} else {
-				
-				campos[3] = linha;
-				this.linhas.add(Arrays.asList(campos));
-				
-			}
+				String original = linha.substring(car_ini+13,car_tot);
+                original = original.replace("\"", "");
+                original = original.replace("\"", "");
+                
+                
+                
 
-		}
-		//buffWrite.close();
-		buffRead.close();	
-	}
+                String[] infos = original.split(",");
+                
+                
+                String tipo = infos.length > 0 ? infos[0] : "Sem Tipo";
+                String grupo = infos.length > 1 ? infos[0] : "Sem Grupo";
+                String nomeCanal = infos.length > 1 ? infos[1] : "Sem Canal";
+                String link = linhas.get(i + 1).trim();
+                canais.add(new Canal(grupo, tipo, nomeCanal, link));
+            }
+        }
 
+        return canais;
+    }
+
+    private static void criarArquivoExcel(List<Canal> canais, String filePath) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Canais");
+
+        // Cabeçalho
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Grupo");
+        headerRow.createCell(1).setCellValue("Tipo");
+        headerRow.createCell(2).setCellValue("Canal");
+        headerRow.createCell(3).setCellValue("Link");
+
+        // Preenchendo os dados
+        int rowNum = 1;
+        for (Canal canal : canais) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(canal.getGrupo());
+            row.createCell(1).setCellValue(canal.getTipo());
+            row.createCell(2).setCellValue(canal.getNomeCanal());
+            row.createCell(3).setCellValue(canal.getLink());
+        }
+
+        // Ajustando o tamanho das colunas
+        for (int i = 0; i < 4; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Escrevendo o arquivo
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        } catch(IOException e) {
+        	JOptionPane.showMessageDialog(null, e);
+        }
+
+        workbook.close();
+    }
+
+    static class Canal {
+        private String grupo;
+        private String tipo;
+        private String nomeCanal;
+        private String link;
+
+        public Canal(String grupo, String tipo, String nomeCanal, String link) {
+            this.grupo = grupo;
+            this.tipo = tipo;
+            this.nomeCanal = nomeCanal;
+            this.link = link;
+        }
+
+        public String getGrupo() {
+            return grupo;
+        }
+
+        public String getTipo() {
+            return tipo;
+        }
+
+        public String getNomeCanal() {
+            return nomeCanal;
+        }
+
+        public String getLink() {
+            return link;
+        }
+    }
 }

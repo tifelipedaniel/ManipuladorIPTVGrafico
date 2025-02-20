@@ -1,6 +1,7 @@
 package br.com.iptv.main;
-import br.com.iptv.geraexcel.GeraExcel;
+import br.com.iptv.download.*;
 import br.com.iptv.manipulador.*;
+import br.com.iptv.ordenaexcel.*;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
@@ -12,6 +13,7 @@ import java.awt.BorderLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -163,25 +165,19 @@ public class ManipuladorIPTVGrafico {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ManipuladorArquivo man = new ManipuladorArquivo();
-				GeraExcel geraexcel = new GeraExcel();
-				
+				Download downloadFile = new Download();
 				try {
-					man.manipulador(txtArquivoOrigem.getText(), txtArquivoDestino.getText(), txtArquivoDrive.getText(), txtLink.getText());
-					try {
-						geraexcel.writeExcel(man.linhas, txtArquivoDestino.getText());
-					} catch (RowsExceededException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (WriteException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					downloadFile.downloadFile(txtLink.getText(), txtArquivoOrigem.getText());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, e1.toString());
 				}
 				
+				ManipuladorArquivo converter = new ManipuladorArquivo();
+				converter.Principal(txtArquivoOrigem.getText(), txtArquivoDestino.getText());
+				
+//				OrdenaExcel ordenador = new OrdenaExcel();
+//				ordenador.ordenarPlanilha(txtArquivoDestino.getText());
 			}
 		});
 		btnNewButton.setBounds(169, 8, 79, 23);
