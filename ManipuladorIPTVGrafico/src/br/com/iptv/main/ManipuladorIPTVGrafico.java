@@ -1,15 +1,12 @@
 package br.com.iptv.main;
 import br.com.iptv.download.*;
 import br.com.iptv.manipulador.*;
-import br.com.iptv.ordenaexcel.*;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
+
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -24,25 +21,8 @@ import java.io.IOException;
 
 import javax.swing.Action;
 import net.miginfocom.swing.MigLayout;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.BoxLayout;
-import javax.swing.SpringLayout;
-import java.awt.FlowLayout;
-import java.awt.CardLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
 import java.awt.event.ActionListener;
 
 public class ManipuladorIPTVGrafico {
@@ -52,7 +32,6 @@ public class ManipuladorIPTVGrafico {
 	private JTextField txtArquivoDestino;
 	//private JProgressBar prbProgresso;
 	private final Action action = new SwingAction();
-	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtArquivoDrive;
 	private JTextField txtLink;
 

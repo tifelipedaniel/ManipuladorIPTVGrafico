@@ -32,22 +32,13 @@ public class ManipuladorArquivo {
 
         for (int i = 0; i < linhas.size(); i++) {
             String linha = linhas.get(i);
-            if (linha.startsWith("#EXTINF:")) {
-                String[] partes = linha.split(",");
-                String info = partes[0].substring(8); // Remove "#EXTINF:"
-               
+            if (linha.startsWith("#EXTINF:")) {               
                 int car_ini = linha.indexOf("group-title=\"");
 				int car_tot = linha.length();
 				String original = linha.substring(car_ini+13,car_tot);
                 original = original.replace("\"", "");
                 original = original.replace("\"", "");
-                
-                
-                
-
                 String[] infos = original.split(",");
-                
-                
                 String tipo = infos.length > 0 ? infos[0] : "Sem Tipo";
                 String grupo = infos.length > 1 ? infos[0] : "Sem Grupo";
                 String nomeCanal = infos.length > 1 ? infos[1] : "Sem Canal";
