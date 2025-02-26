@@ -157,6 +157,8 @@ public class ManipuladorIPTVGrafico {
 				
 //				OrdenaExcel ordenador = new OrdenaExcel();
 //				ordenador.ordenarPlanilha(txtArquivoDestino.getText());
+				
+
 			}
 		});
 		btnNewButton.setBounds(169, 8, 79, 23);
