@@ -144,16 +144,23 @@ public class ManipuladorIPTVGrafico {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				Download downloadFile = new Download();
 				try {
+					lblProgresso.setText("Baixando arquivo...");
+					Download downloadFile = new Download();
 					downloadFile.downloadFile(txtLink.getText(), txtArquivoOrigem.getText());
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
+					lblProgresso.setText("Verificar erros.");
 					JOptionPane.showMessageDialog(null, e1.toString());
 				}
 				
-				ManipuladorArquivo converter = new ManipuladorArquivo();
-				converter.Principal(txtArquivoOrigem.getText(), txtArquivoDestino.getText());
+				try {
+					lblProgresso.setText("Convertendo em Excel...");
+					ManipuladorArquivo converter = new ManipuladorArquivo();
+					converter.Principal(txtArquivoOrigem.getText(), txtArquivoDestino.getText());					
+				} catch (Exception e2) {
+					lblProgresso.setText("Verificar erros.");
+					JOptionPane.showMessageDialog(null, e2.toString());
+				}
 				
 //				OrdenaExcel ordenador = new OrdenaExcel();
 //				ordenador.ordenarPlanilha(txtArquivoDestino.getText());

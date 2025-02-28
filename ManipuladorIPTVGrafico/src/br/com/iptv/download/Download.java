@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.JProgressBar;
-
 public class Download {
 
     public String downloadFile(String link, String arquivo) throws IOException {
